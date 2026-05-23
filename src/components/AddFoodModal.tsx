@@ -30,7 +30,6 @@ export function AddFoodModal({
   const [customProtein, setCustomProtein] = useState("");
   const [customFat, setCustomFat] = useState("");
   const [customCarbs, setCustomCarbs] = useState("");
-  const [saveToPreset, setSaveToPreset] = useState(true);
 
   const presets = getFoodsByCategory(mealType, customFoods);
   const myPresets = presets.filter((f) => f.id.startsWith("custom-"));
@@ -54,20 +53,27 @@ export function AddFoodModal({
     onClose();
   }
 
-  function handleCustomAdd() {
+  function getCustomValues() {
+    return {
+      name: customName.trim(),
+      grams: parseFloat(grams) || 100,
+      calories: parseFloat(customCal) || 0,
+      protein: parseFloat(customProtein) || 0,
+      fat: parseFloat(customFat) || 0,
+      carbs: parseFloat(customCarbs) || 0,
+    };
+  }
+
+  function handleCustomAdd(saveToPreset: boolean) {
     if (!customName.trim()) return;
-    const g = parseFloat(grams) || 100;
-    const cal = parseFloat(customCal) || 0;
-    const protein = parseFloat(customProtein) || 0;
-    const fat = parseFloat(customFat) || 0;
-    const carbs = parseFloat(customCarbs) || 0;
+    const { name, grams: g, calories, protein, fat, carbs } = getCustomValues();
 
     onAdd({
       id: crypto.randomUUID(),
-      name: customName.trim(),
+      name,
       mealType,
       grams: g,
-      calories: cal,
+      calories,
       protein,
       fat,
       carbs,
@@ -77,11 +83,11 @@ export function AddFoodModal({
     if (saveToPreset) {
       onSaveCustomFood({
         id: `custom-${crypto.randomUUID()}`,
-        name: customName.trim(),
+        name,
         category: mealType,
         defaultGrams: g,
         unit: "g",
-        calories: cal,
+        calories,
         protein,
         fat,
         carbs,
@@ -186,15 +192,6 @@ export function AddFoodModal({
                 <input type="number" placeholder="Yağ (g)" value={customFat} onChange={(e) => setCustomFat(e.target.value)} className="rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
                 <input type="number" placeholder="Karbonhidrat (g)" value={customCarbs} onChange={(e) => setCustomCarbs(e.target.value)} className="col-span-2 rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
               </div>
-              <label className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2.5">
-                <input
-                  type="checkbox"
-                  checked={saveToPreset}
-                  onChange={(e) => setSaveToPreset(e.target.checked)}
-                  className="h-4 w-4 rounded border-zinc-300 text-emerald-600"
-                />
-                <span className="text-sm text-zinc-700">Hazır menüye kaydet</span>
-              </label>
             </div>
           )}
         </div>
@@ -219,13 +216,32 @@ export function AddFoodModal({
         )}
 
         <div className="border-t border-zinc-100 p-4">
-          <button
-            onClick={tab === "preset" ? handlePresetAdd : handleCustomAdd}
-            disabled={tab === "preset" ? !selectedFood : !customName.trim()}
-            className="w-full rounded-xl bg-emerald-600 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-40"
-          >
-            Ekle
-          </button>
+          {tab === "preset" ? (
+            <button
+              onClick={handlePresetAdd}
+              disabled={!selectedFood}
+              className="w-full rounded-xl bg-emerald-600 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-40"
+            >
+              Bugüne Ekle
+            </button>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => handleCustomAdd(false)}
+                disabled={!customName.trim()}
+                className="w-full rounded-xl border-2 border-emerald-600 py-3 font-semibold text-emerald-700 transition-colors hover:bg-emerald-50 disabled:opacity-40"
+              >
+                Bugüne Ekle
+              </button>
+              <button
+                onClick={() => handleCustomAdd(true)}
+                disabled={!customName.trim()}
+                className="w-full rounded-xl bg-emerald-600 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-40"
+              >
+                Hazır Menüye de Ekle
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
