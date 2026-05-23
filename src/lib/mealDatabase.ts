@@ -1,5 +1,11 @@
 import type { FoodItem } from "./types";
 
+/**
+ * Kalori/makro değerleri porsiyon bazlıdır (toplam tabak).
+ * Kaynaklar: TUBITAK besin tablosu, diyetisyen veri tabanları, standart TR porsiyonları.
+ * Diyet hedefi: ~1362 kcal/gün, protein ≥99g — yüksek proteinli seçenekler öncelikli.
+ */
+
 function food(
   id: string,
   name: string,
@@ -25,53 +31,54 @@ function food(
 }
 
 export const FOOD_DATABASE: FoodItem[] = [
-  // Kahvaltı / Brunch — peynir, yumurta, zeytin, salata yok
-  food("yulaf-lapasi", "Yulaf Lapası (süt + muz + bal)", "kahvalti", 250, 280, 10, 6, 48),
-  food("tam-bugday-recel", "Tam Buğday Ekmeği + Reçel", "kahvalti", 80, 210, 6, 3, 40),
-  food("fistik-ezmesi-ekmek", "Tam Buğday Ekmek + Fıstık Ezmesi", "kahvalti", 70, 260, 10, 12, 28),
-  food("muz-smoothie", "Muz-Yulaf Smoothie", "kahvalti", 300, 220, 8, 4, 38),
-  food("simit", "Simit", "kahvalti", 100, 280, 9, 6, 48),
-  food("ayran-simit", "Simit + Ayran", "kahvalti", 350, 320, 12, 8, 50),
-  food("lor-kofte", "Lor Köfte (az yağlı)", "kahvalti", 150, 180, 18, 8, 6),
-  food("pankek-muz", "Muzlu Pankek (2 adet)", "kahvalti", 120, 240, 8, 6, 38),
-  food("bal-kaymak-az", "Az Kaymak + Bal + Ekmek", "kahvalti", 90, 250, 6, 10, 34),
+  // Kahvaltı / Brunch — yumurta, peynir, zeytin, yulaf, muz, smoothie, fıstık ezmesi, kaymak yok
+  food("tam-bugday-recel", "Tam Buğday Ekmeği + Reçel", "kahvalti", 70, 195, 5, 2, 38),
+  food("tam-bugday-domates", "Tam Buğday Tost + Domates", "kahvalti", 90, 185, 6, 3, 32),
+  food("bazlama-bal", "Bazlama + Bal", "kahvalti", 80, 210, 5, 3, 42),
+  food("avokado-ekmek", "Avokado + Tam Buğday Ekmek", "kahvalti", 130, 245, 6, 14, 24),
+  food("tavuk-ekmek-brunch", "Izgara Tavuk Göğsü + Ekmek", "kahvalti", 180, 295, 32, 5, 28),
+  food("simit", "Simit (1 adet)", "kahvalti", 100, 275, 9, 7, 44),
+  food("ayran-simit", "Simit + Ayran", "kahvalti", 300, 335, 13, 8, 48),
 
-  // Öğle
-  food("tavuk-izgara", "Izgara Tavuk Göğsü + Pilav", "ogle", 300, 380, 38, 8, 36),
-  food("kofte-pilav", "Köfte + Bulgur Pilavı", "ogle", 320, 420, 28, 18, 38),
-  food("balik-izgara", "Izgara Somon/Balık + Sebze (pişmiş)", "ogle", 280, 340, 32, 14, 22),
-  food("mercimek-corbasi", "Mercimek Çorbası + Ekmek", "ogle", 350, 320, 18, 6, 48),
-  food("tavuk-sote", "Tavuk Sote + Bulgur", "ogle", 300, 360, 34, 10, 32),
-  food("lahmacun", "Lahmacun (1 adet)", "ogle", 180, 280, 14, 10, 34),
-  food("doner-durum", "Tavuk Döner Dürüm (az sos)", "ogle", 250, 380, 26, 14, 38),
-  food("makarna-domates", "Domates Soslu Makarna", "ogle", 280, 340, 12, 6, 58),
-  food("kuru-fasulye", "Kuru Fasulye + Pilav", "ogle", 350, 400, 20, 10, 58),
-  food("tavuk-guvec", "Tavuk Güveç (pişmiş sebzeli)", "ogle", 300, 320, 30, 12, 24),
+  // Öğle — çorba yok; protein + kontrollü karbonhidrat
+  // 100g tavuk göğsü ~165 kcal + 150g pilav ~230 kcal
+  food("tavuk-izgara", "Izgara Tavuk Göğsü + Pilav", "ogle", 250, 395, 36, 8, 38),
+  food("tavuk-sote", "Tavuk Sote + Bulgur", "ogle", 280, 370, 35, 9, 34),
+  food("tavuk-guvec", "Tavuk Güveç (pişmiş sebzeli)", "ogle", 280, 310, 32, 10, 22),
+  food("kofte-pilav", "Izgara Köfte + Bulgur Pilavı", "ogle", 300, 410, 30, 16, 36),
+  food("balik-izgara", "Izgara Balık + Pişmiş Sebze", "ogle", 260, 330, 34, 12, 18),
+  food("lahmacun", "Lahmacun (1 adet, orta)", "ogle", 120, 185, 10, 7, 22),
+  food("doner-durum", "Tavuk Döner Dürüm (az soslu)", "ogle", 220, 420, 28, 14, 42),
+  food("makarna-domates", "Domates Soslu Makarna (küçük porsiyon)", "ogle", 220, 300, 11, 5, 52),
+  food("kuru-fasulye", "Kuru Fasulye + Az Pilav", "ogle", 320, 380, 18, 9, 52),
+  food("tavuk-sis", "Tavuk Şiş + Bulgur", "ogle", 270, 360, 34, 8, 32),
 
-  // Akşam
-  food("izgara-kofte", "Izgara Köfte + Salata yerine pişmiş sebze", "aksam", 280, 360, 30, 16, 24),
-  food("tavuk-firin", "Fırında Tavuk But (derisiz) + Patates", "aksam", 320, 380, 34, 12, 32),
-  food("balik-buğulama", "Buğulama Balık + Pirinç", "aksam", 300, 340, 32, 10, 28),
-  food("sebze-guvec", "Etli Sebze Güveci (patlıcan, kabak)", "aksam", 300, 300, 22, 14, 22),
-  food("manti-az", "Mantı (küçük porsiyon, yoğurt)", "aksam", 200, 320, 14, 10, 42),
-  food("pide-kusbasi", "Kuşbaşılı Pide (yarım)", "aksam", 200, 380, 18, 14, 44),
-  food("tavuk-corba", "Tavuk Çorbası + Ekmek", "aksam", 350, 280, 22, 8, 32),
-  food("zeytinyagli-fasulye", "Zeytinyağlı Taze Fasulye + Ekmek", "aksam", 300, 260, 10, 8, 38),
-  food("karniyarik-az", "Karnıyarık (küçük porsiyon)", "aksam", 250, 320, 16, 18, 24),
+  // Akşam — çorba ve karnıyarık yok
+  food("izgara-kofte", "Izgara Köfte + Pişmiş Sebze", "aksam", 260, 340, 28, 14, 22),
+  food("tavuk-firin", "Fırında Tavuk (derisiz) + Patates", "aksam", 300, 370, 36, 10, 30),
+  food("balik-buğulama", "Buğulama Balık + Az Pirinç", "aksam", 280, 330, 33, 9, 26),
+  food("sebze-guvec", "Etli Sebze Güveci (patlıcan, kabak)", "aksam", 280, 290, 22, 12, 20),
+  food("manti-az", "Mantı (küçük porsiyon, yoğurt)", "aksam", 180, 300, 13, 9, 40),
+  food("pide-kusbasi", "Kuşbaşılı Pide (yarım)", "aksam", 180, 360, 16, 12, 46),
+  food("zeytinyagli-fasulye", "Zeytinyağlı Taze Fasulye + Ekmek", "aksam", 280, 250, 9, 7, 36),
+  food("levrek-izgara", "Izgara Levrek + Pişmiş Sebze", "aksam", 260, 320, 32, 11, 16),
+  food("tavuk-izgara-salata-yok", "Izgara Tavuk + Fırın Sebze", "aksam", 250, 300, 34, 8, 18),
 
-  // Ara öğünler
-  food("muz", "Muz (1 adet)", "ara1", 120, 105, 1, 0, 27),
+  // Ara öğünler — muz yok
   food("elma", "Elma", "ara1", 150, 78, 0, 0, 21),
-  food("ceviz-badem", "Ceviz + Badem karışık", "ara1", 30, 190, 6, 17, 4),
+  food("armut", "Armut", "ara1", 150, 85, 0, 0, 22),
+  food("ceviz-badem", "Ceviz + Badem (1 avuç)", "ara1", 25, 165, 5, 15, 4),
   food("protein-bar", "Protein Bar", "ara1", 60, 200, 20, 8, 18),
   food("ayran", "Ayran", "ara1", 200, 60, 4, 2, 6),
-  food("yogurt-bal", "Yoğurt + Bal (semizotu yok)", "ara1", 200, 160, 10, 4, 24),
-  food("findik", "Fındık (avuç)", "ara2", 25, 160, 4, 15, 4),
+  food("yogurt-bal", "Yoğurt + Bal", "ara1", 180, 145, 10, 3, 20),
+  food("kefir", "Kefir", "ara1", 200, 90, 7, 3, 10),
+  food("findik", "Fındık (1 avuç)", "ara2", 20, 130, 3, 12, 3),
   food("cilek", "Çilek", "ara2", 150, 48, 1, 0, 12),
   food("portakal", "Portakal", "ara2", 180, 85, 2, 0, 21),
+  food("uzum", "Üzüm (1 avuç)", "ara2", 100, 70, 1, 0, 18),
   food("bitter-cikolata", "Bitter Çikolata (2 kare)", "ara2", 20, 110, 2, 8, 8),
-  food("popcorn", "Patlamış Mısır (az tuzlu)", "ara2", 30, 120, 3, 4, 18),
-  food("humus-ekmek", "Humus + Tam Buğday Kraker", "ara2", 80, 180, 7, 8, 20),
+  food("popcorn", "Patlamış Mısır (az tuzlu)", "ara2", 25, 95, 3, 3, 14),
+  food("humus-ekmek", "Humus + Tam Buğday Kraker", "ara2", 80, 175, 7, 7, 20),
 ];
 
 export function getFoodsByCategory(category: FoodItem["category"]): FoodItem[] {
