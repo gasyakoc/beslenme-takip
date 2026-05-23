@@ -3,15 +3,25 @@
 import { useState } from "react";
 import type { FoodItem, LoggedFood, MealType } from "@/lib/types";
 import { MEAL_LABELS, MEAL_TIMES } from "@/lib/types";
-import { FOOD_DATABASE, getFoodsByCategory, scaleFood } from "@/lib/mealDatabase";
+import { getFoodsByCategory, scaleFood } from "@/lib/mealDatabase";
 
 interface AddFoodModalProps {
   mealType: MealType;
+  customFoods: FoodItem[];
   onAdd: (food: LoggedFood) => void;
+  onSaveCustomFood: (food: FoodItem) => void;
+  onRemoveCustomFood: (id: string) => void;
   onClose: () => void;
 }
 
-export function AddFoodModal({ mealType, onAdd, onClose }: AddFoodModalProps) {
+export function AddFoodModal({
+  mealType,
+  customFoods,
+  onAdd,
+  onSaveCustomFood,
+  onRemoveCustomFood,
+  onClose,
+}: AddFoodModalProps) {
   const [tab, setTab] = useState<"preset" | "custom">("preset");
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
   const [grams, setGrams] = useState("");
@@ -20,8 +30,10 @@ export function AddFoodModal({ mealType, onAdd, onClose }: AddFoodModalProps) {
   const [customProtein, setCustomProtein] = useState("");
   const [customFat, setCustomFat] = useState("");
   const [customCarbs, setCustomCarbs] = useState("");
+  const [saveToPreset, setSaveToPreset] = useState(true);
 
-  const presets = getFoodsByCategory(mealType);
+  const presets = getFoodsByCategory(mealType, customFoods);
+  const myPresets = presets.filter((f) => f.id.startsWith("custom-"));
 
   function handlePresetAdd() {
     if (!selectedFood) return;
@@ -44,17 +56,38 @@ export function AddFoodModal({ mealType, onAdd, onClose }: AddFoodModalProps) {
 
   function handleCustomAdd() {
     if (!customName.trim()) return;
+    const g = parseFloat(grams) || 100;
+    const cal = parseFloat(customCal) || 0;
+    const protein = parseFloat(customProtein) || 0;
+    const fat = parseFloat(customFat) || 0;
+    const carbs = parseFloat(customCarbs) || 0;
+
     onAdd({
       id: crypto.randomUUID(),
       name: customName.trim(),
       mealType,
-      grams: parseFloat(grams) || 100,
-      calories: parseFloat(customCal) || 0,
-      protein: parseFloat(customProtein) || 0,
-      fat: parseFloat(customFat) || 0,
-      carbs: parseFloat(customCarbs) || 0,
+      grams: g,
+      calories: cal,
+      protein,
+      fat,
+      carbs,
       eaten: true,
     });
+
+    if (saveToPreset) {
+      onSaveCustomFood({
+        id: `custom-${crypto.randomUUID()}`,
+        name: customName.trim(),
+        category: mealType,
+        defaultGrams: g,
+        unit: "g",
+        calories: cal,
+        protein,
+        fat,
+        carbs,
+      });
+    }
+
     onClose();
   }
 
@@ -94,25 +127,48 @@ export function AddFoodModal({ mealType, onAdd, onClose }: AddFoodModalProps) {
         <div className="max-h-[50vh] overflow-y-auto p-4">
           {tab === "preset" ? (
             <div className="space-y-2">
-              {presets.map((food) => (
-                <button
-                  key={food.id}
-                  onClick={() => {
-                    setSelectedFood(food);
-                    setGrams(String(food.defaultGrams));
-                  }}
-                  className={`w-full rounded-xl border p-3 text-left transition-all ${
-                    selectedFood?.id === food.id
-                      ? "border-emerald-500 bg-emerald-50"
-                      : "border-zinc-100 hover:border-zinc-200"
-                  }`}
-                >
-                  <p className="font-medium text-zinc-900">{food.name}</p>
-                  <p className="mt-0.5 text-xs text-zinc-500">
-                    {food.defaultGrams}g · {food.calories} kcal · P:{food.protein}g Y:{food.fat}g K:{food.carbs}g
-                  </p>
-                </button>
-              ))}
+              {myPresets.length > 0 && (
+                <p className="text-xs font-medium text-emerald-600">Kaydettiğin yemekler</p>
+              )}
+              {presets.map((food) => {
+                const isMine = food.id.startsWith("custom-");
+                return (
+                  <div key={food.id} className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setSelectedFood(food);
+                        setGrams(String(food.defaultGrams));
+                      }}
+                      className={`min-w-0 flex-1 rounded-xl border p-3 text-left transition-all ${
+                        selectedFood?.id === food.id
+                          ? "border-emerald-500 bg-emerald-50"
+                          : "border-zinc-100 hover:border-zinc-200"
+                      }`}
+                    >
+                      <p className="font-medium text-zinc-900">
+                        {food.name}
+                        {isMine && (
+                          <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                            Senin
+                          </span>
+                        )}
+                      </p>
+                      <p className="mt-0.5 text-xs text-zinc-500">
+                        {food.defaultGrams}g · {food.calories} kcal · P:{food.protein}g Y:{food.fat}g K:{food.carbs}g
+                      </p>
+                    </button>
+                    {isMine && (
+                      <button
+                        onClick={() => onRemoveCustomFood(food.id)}
+                        className="shrink-0 rounded-xl border border-zinc-200 px-3 text-zinc-400 hover:border-red-200 hover:text-red-500"
+                        aria-label="Hazır menüden sil"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="space-y-3">
@@ -130,6 +186,15 @@ export function AddFoodModal({ mealType, onAdd, onClose }: AddFoodModalProps) {
                 <input type="number" placeholder="Yağ (g)" value={customFat} onChange={(e) => setCustomFat(e.target.value)} className="rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
                 <input type="number" placeholder="Karbonhidrat (g)" value={customCarbs} onChange={(e) => setCustomCarbs(e.target.value)} className="col-span-2 rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-emerald-500" />
               </div>
+              <label className="flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2.5">
+                <input
+                  type="checkbox"
+                  checked={saveToPreset}
+                  onChange={(e) => setSaveToPreset(e.target.checked)}
+                  className="h-4 w-4 rounded border-zinc-300 text-emerald-600"
+                />
+                <span className="text-sm text-zinc-700">Hazır menüye kaydet</span>
+              </label>
             </div>
           )}
         </div>
@@ -166,5 +231,3 @@ export function AddFoodModal({ mealType, onAdd, onClose }: AddFoodModalProps) {
     </div>
   );
 }
-
-export { FOOD_DATABASE };

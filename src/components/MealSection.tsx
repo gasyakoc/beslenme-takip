@@ -1,24 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import type { LoggedFood, MealType } from "@/lib/types";
+import type { FoodItem, LoggedFood, MealType } from "@/lib/types";
 import { MEAL_LABELS, MEAL_TIMES } from "@/lib/types";
 import { AddFoodModal } from "./AddFoodModal";
 
 interface MealSectionProps {
   mealType: MealType;
   meals: LoggedFood[];
+  customFoods: FoodItem[];
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
   onAdd: (food: LoggedFood) => void;
+  onSaveCustomFood: (food: FoodItem) => void;
+  onRemoveCustomFood: (id: string) => void;
 }
 
 export function MealSection({
   mealType,
   meals,
+  customFoods,
   onToggle,
   onRemove,
   onAdd,
+  onSaveCustomFood,
+  onRemoveCustomFood,
 }: MealSectionProps) {
   const [showAdd, setShowAdd] = useState(false);
   const mealItems = meals.filter((m) => m.mealType === mealType);
@@ -90,7 +96,10 @@ export function MealSection({
       {showAdd && (
         <AddFoodModal
           mealType={mealType}
+          customFoods={customFoods}
           onAdd={onAdd}
+          onSaveCustomFood={onSaveCustomFood}
+          onRemoveCustomFood={onRemoveCustomFood}
           onClose={() => setShowAdd(false)}
         />
       )}

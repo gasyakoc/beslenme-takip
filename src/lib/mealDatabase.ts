@@ -87,10 +87,17 @@ export const FOOD_DATABASE: FoodItem[] = [
   food("salata-tavuk", "Tavuklu Salata", "genel", 250, 280, 32, 10, 14),
 ];
 
-export function getFoodsByCategory(category: FoodItem["category"]): FoodItem[] {
-  return FOOD_DATABASE.filter(
-    (f) => f.category === category || f.category === "genel"
-  );
+export function getFoodsByCategory(
+  category: FoodItem["category"],
+  customFoods: FoodItem[] = []
+): FoodItem[] {
+  const match = (f: FoodItem) =>
+    f.category === category || f.category === "genel";
+
+  const customs = customFoods.filter(match);
+  const builtins = FOOD_DATABASE.filter(match);
+
+  return [...customs, ...builtins];
 }
 
 export function scaleFood(food: FoodItem, grams: number): FoodItem {

@@ -18,6 +18,7 @@ export function getDefaultAppData(): AppData {
     targets: USER_TARGETS,
     days: {},
     weightLog: [{ date: new Date().toISOString().slice(0, 10), weight: USER_PROFILE.currentWeight }],
+    customFoods: [],
   };
 }
 
@@ -61,6 +62,7 @@ export function loadAppData(): AppData {
       profile: USER_PROFILE,
       targets: USER_TARGETS,
       days: migrateDays(parsed.days),
+      customFoods: parsed.customFoods ?? [],
     };
   } catch {
     return getDefaultAppData();

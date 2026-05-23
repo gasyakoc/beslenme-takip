@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { AppData, LoggedExercise, LoggedFood, MealType } from "@/lib/types";
+import type { AppData, FoodItem, LoggedExercise, LoggedFood, MealType } from "@/lib/types";
 import {
   addDays,
   formatDate,
@@ -100,6 +100,20 @@ export function App() {
     }));
   }
 
+  function handleSaveCustomFood(food: FoodItem) {
+    persist({
+      ...appData,
+      customFoods: [...appData.customFoods, food],
+    });
+  }
+
+  function handleRemoveCustomFood(id: string) {
+    persist({
+      ...appData,
+      customFoods: appData.customFoods.filter((f) => f.id !== id),
+    });
+  }
+
   function handleAddWeight(weight: number) {
     const today = formatDate(new Date());
     const existing = appData.weightLog.findIndex((e) => e.date === today);
@@ -189,9 +203,12 @@ export function App() {
                 key={mealType}
                 mealType={mealType}
                 meals={day.meals}
+                customFoods={appData.customFoods}
                 onToggle={handleToggleMeal}
                 onRemove={handleRemoveMeal}
                 onAdd={handleAddFood}
+                onSaveCustomFood={handleSaveCustomFood}
+                onRemoveCustomFood={handleRemoveCustomFood}
               />
             ))}
 

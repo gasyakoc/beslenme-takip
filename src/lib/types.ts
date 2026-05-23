@@ -63,6 +63,7 @@ export interface AppData {
   targets: UserTargets;
   days: Record<string, DayLog>;
   weightLog: WeightEntry[];
+  customFoods: FoodItem[];
 }
 
 export const MEAL_LABELS: Record<MealType, string> = {
