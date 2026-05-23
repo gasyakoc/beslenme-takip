@@ -3,10 +3,11 @@
 import type { ExerciseType, LoggedExercise } from "@/lib/types";
 import { EXERCISE_LABELS } from "@/lib/types";
 import {
-  DEFAULT_MINUTES,
   createExercise,
+  getCaloriesPerStep,
   sumExerciseCalories,
   updateExerciseMinutes,
+  updateExerciseSteps,
 } from "@/lib/exercises";
 
 const EXERCISE_ICONS: Record<ExerciseType, string> = {
@@ -18,6 +19,7 @@ const EXERCISE_ICONS: Record<ExerciseType, string> = {
 interface ExerciseTrackerProps {
   exercises: LoggedExercise[];
   weightKg: number;
+  heightCm: number;
   onAdd: (exercise: LoggedExercise) => void;
   onUpdate: (exercise: LoggedExercise) => void;
   onRemove: (id: string) => void;
@@ -26,16 +28,18 @@ interface ExerciseTrackerProps {
 export function ExerciseTracker({
   exercises,
   weightKg,
+  heightCm,
   onAdd,
   onUpdate,
   onRemove,
 }: ExerciseTrackerProps) {
   const totalBurned = sumExerciseCalories(exercises);
   const activeTypes = new Set(exercises.map((e) => e.type));
+  const calPerStep = getCaloriesPerStep(weightKg, heightCm);
 
   function handleAdd(type: ExerciseType) {
     if (activeTypes.has(type)) return;
-    onAdd(createExercise(type, DEFAULT_MINUTES[type], weightKg));
+    onAdd(createExercise(type, weightKg, heightCm));
   }
 
   return (
@@ -100,42 +104,91 @@ export function ExerciseTracker({
                   ✕
                 </button>
               </div>
-              <div className="mt-2 flex items-center justify-between">
-                <span className="text-xs text-zinc-500">Süre (dk)</span>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() =>
-                      onUpdate(
-                        updateExerciseMinutes(
-                          exercise,
-                          exercise.minutes - 5,
-                          weightKg
+
+              {exercise.type === "yuruyus" ? (
+                <div className="mt-2">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-xs text-zinc-500">Adım</span>
+                    <span className="text-[10px] text-zinc-400">
+                      ~{calPerStep.toFixed(3)} kcal/adım
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() =>
+                        onUpdate(
+                          updateExerciseSteps(
+                            exercise,
+                            (exercise.steps ?? 0) - 500,
+                            weightKg,
+                            heightCm
+                          )
                         )
-                      )
-                    }
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-sm font-medium hover:bg-zinc-50"
-                  >
-                    −
-                  </button>
-                  <span className="w-10 text-center text-sm font-semibold tabular-nums">
-                    {exercise.minutes}
-                  </span>
-                  <button
-                    onClick={() =>
-                      onUpdate(
-                        updateExerciseMinutes(
-                          exercise,
-                          exercise.minutes + 5,
-                          weightKg
+                      }
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-sm font-medium hover:bg-zinc-50"
+                    >
+                      −
+                    </button>
+                    <span className="w-16 text-center text-sm font-semibold tabular-nums">
+                      {(exercise.steps ?? 0).toLocaleString("tr-TR")}
+                    </span>
+                    <button
+                      onClick={() =>
+                        onUpdate(
+                          updateExerciseSteps(
+                            exercise,
+                            (exercise.steps ?? 0) + 500,
+                            weightKg,
+                            heightCm
+                          )
                         )
-                      )
-                    }
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-sm font-medium hover:bg-zinc-50"
-                  >
-                    +
-                  </button>
+                      }
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-sm font-medium hover:bg-zinc-50"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="text-xs text-zinc-500">Süre (dk)</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        onUpdate(
+                          updateExerciseMinutes(
+                            exercise,
+                            (exercise.minutes ?? 0) - 5,
+                            weightKg,
+                            heightCm
+                          )
+                        )
+                      }
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-sm font-medium hover:bg-zinc-50"
+                    >
+                      −
+                    </button>
+                    <span className="w-10 text-center text-sm font-semibold tabular-nums">
+                      {exercise.minutes}
+                    </span>
+                    <button
+                      onClick={() =>
+                        onUpdate(
+                          updateExerciseMinutes(
+                            exercise,
+                            (exercise.minutes ?? 0) + 5,
+                            weightKg,
+                            heightCm
+                          )
+                        )
+                      }
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-sm font-medium hover:bg-zinc-50"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>

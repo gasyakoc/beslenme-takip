@@ -29,7 +29,8 @@ export interface LoggedFood extends MacroNutrients {
 export interface LoggedExercise {
   id: string;
   type: ExerciseType;
-  minutes: number;
+  minutes?: number;
+  steps?: number;
   caloriesBurned: number;
 }
 

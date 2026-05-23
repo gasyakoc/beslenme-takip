@@ -221,6 +221,7 @@ export function App() {
             <ExerciseTracker
               exercises={day.exercises}
               weightKg={profile.currentWeight}
+              heightCm={profile.heightCm}
               onAdd={handleAddExercise}
               onUpdate={handleUpdateExercise}
               onRemove={handleRemoveExercise}

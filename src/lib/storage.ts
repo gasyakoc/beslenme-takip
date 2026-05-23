@@ -1,5 +1,6 @@
 import {
   createExercise,
+  migrateLegacyExercise,
   sumExerciseCalories,
 } from "./exercises";
 import { USER_PROFILE, USER_TARGETS } from "./profile";
@@ -26,16 +27,18 @@ function migrateExercises(exercises: unknown): LoggedExercise[] {
   if (!Array.isArray(exercises)) return [];
   return exercises.map((entry, index) => {
     if (typeof entry === "string") {
-      return createExercise(entry as ExerciseType, 30, USER_PROFILE.currentWeight);
+      return migrateLegacyExercise(
+        createExercise(entry as ExerciseType, USER_PROFILE.currentWeight, USER_PROFILE.heightCm),
+        USER_PROFILE.currentWeight,
+        USER_PROFILE.heightCm
+      );
     }
     const e = entry as LoggedExercise;
-    return {
-      ...e,
-      id: e.id ?? `ex-${index}`,
-      caloriesBurned:
-        e.caloriesBurned ??
-        createExercise(e.type, e.minutes, USER_PROFILE.currentWeight).caloriesBurned,
-    };
+    return migrateLegacyExercise(
+      { ...e, id: e.id ?? `ex-${index}` },
+      USER_PROFILE.currentWeight,
+      USER_PROFILE.heightCm
+    );
   });
 }
 
