@@ -46,23 +46,25 @@ export const FOOD_DATABASE: FoodItem[] = [
   food("tavuk-sote", "Tavuk Sote + Bulgur", "ogle", 280, 370, 35, 9, 34),
   food("tavuk-guvec", "Tavuk Güveç (pişmiş sebzeli)", "ogle", 280, 310, 32, 10, 22),
   food("kofte-pilav", "Izgara Köfte + Bulgur Pilavı", "ogle", 300, 410, 30, 16, 36),
-  food("balik-izgara", "Izgara Balık + Pişmiş Sebze", "ogle", 260, 330, 34, 12, 18),
+  food("balik-izgara", "Izgara Balık + Yeşil Salata", "ogle", 280, 315, 35, 14, 14),
   food("lahmacun", "Lahmacun (1 adet, orta)", "ogle", 120, 185, 10, 7, 22),
   food("doner-durum", "Tavuk Döner Dürüm (az soslu)", "ogle", 220, 420, 28, 14, 42),
   food("makarna-domates", "Domates Soslu Makarna (küçük porsiyon)", "ogle", 220, 300, 11, 5, 52),
   food("kuru-fasulye", "Kuru Fasulye + Az Pilav", "ogle", 320, 380, 18, 9, 52),
-  food("tavuk-sis", "Tavuk Şiş + Bulgur", "ogle", 270, 360, 34, 8, 32),
+  food("tavuk-semizotu", "Izgara Tavuk + Yoğurtlu Semizotu Salatası", "ogle", 280, 385, 38, 12, 20),
+  food("tavuk-sis", "Tavuk Şiş + Bulgur + Salata", "ogle", 320, 390, 36, 10, 36),
 
   // Akşam — çorba ve karnıyarık yok
-  food("izgara-kofte", "Izgara Köfte + Pişmiş Sebze", "aksam", 260, 340, 28, 14, 22),
+  food("izgara-kofte", "Izgara Köfte + Yeşil Salata", "aksam", 280, 350, 29, 15, 16),
   food("tavuk-firin", "Fırında Tavuk (derisiz) + Patates", "aksam", 300, 370, 36, 10, 30),
   food("balik-buğulama", "Buğulama Balık + Az Pirinç", "aksam", 280, 330, 33, 9, 26),
   food("sebze-guvec", "Etli Sebze Güveci (patlıcan, kabak)", "aksam", 280, 290, 22, 12, 20),
   food("manti-az", "Mantı (küçük porsiyon, yoğurt)", "aksam", 180, 300, 13, 9, 40),
   food("pide-kusbasi", "Kuşbaşılı Pide (yarım)", "aksam", 180, 360, 16, 12, 46),
   food("zeytinyagli-fasulye", "Zeytinyağlı Taze Fasulye + Ekmek", "aksam", 280, 250, 9, 7, 36),
-  food("levrek-izgara", "Izgara Levrek + Pişmiş Sebze", "aksam", 260, 320, 32, 11, 16),
-  food("tavuk-izgara-salata-yok", "Izgara Tavuk + Fırın Sebze", "aksam", 250, 300, 34, 8, 18),
+  food("levrek-izgara", "Izgara Levrek + Yeşil Salata", "aksam", 280, 335, 33, 13, 14),
+  food("tavuk-izgara-salata", "Izgara Tavuk + Yeşil Salata", "aksam", 250, 310, 35, 10, 12),
+  food("tavuk-semizotu-aksam", "Izgara Tavuk + Yoğurtlu Semizotu Salatası", "aksam", 270, 375, 37, 11, 18),
 
   // Ara öğünler — muz yok
   food("elma", "Elma", "ara1", 150, 78, 0, 0, 21),
@@ -79,6 +81,13 @@ export const FOOD_DATABASE: FoodItem[] = [
   food("bitter-cikolata", "Bitter Çikolata (2 kare)", "ara2", 20, 110, 2, 8, 8),
   food("popcorn", "Patlamış Mısır (az tuzlu)", "ara2", 25, 95, 3, 3, 14),
   food("humus-ekmek", "Humus + Tam Buğday Kraker", "ara2", 80, 175, 7, 7, 20),
+
+  // Salatalar — tüm öğünlere eklenebilir (genel)
+  food("semizotu-salata", "Yoğurtlu Semizotu Salatası", "genel", 180, 165, 7, 9, 14),
+  food("yesil-salata", "Yeşil Salata (marul, domates, salatalık)", "genel", 200, 95, 3, 6, 10),
+  food("coban-salata", "Çoban Salata", "genel", 200, 110, 3, 7, 12),
+  food("mevsim-salata", "Mevsim Salata (limon, az zeytinyağı)", "genel", 180, 85, 2, 5, 12),
+  food("salata-tavuk", "Tavuklu Salata", "genel", 250, 280, 32, 10, 14),
 ];
 
 export function getFoodsByCategory(category: FoodItem["category"]): FoodItem[] {
