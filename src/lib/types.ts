@@ -26,10 +26,17 @@ export interface LoggedFood extends MacroNutrients {
   eaten: boolean;
 }
 
+export interface LoggedExercise {
+  id: string;
+  type: ExerciseType;
+  minutes: number;
+  caloriesBurned: number;
+}
+
 export interface DayLog {
   meals: LoggedFood[];
   waterMl: number;
-  exercises: ExerciseType[];
+  exercises: LoggedExercise[];
 }
 
 export interface WeightEntry {

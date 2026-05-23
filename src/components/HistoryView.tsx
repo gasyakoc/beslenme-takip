@@ -1,7 +1,7 @@
 "use client";
 
 import type { AppData } from "@/lib/types";
-import { formatDisplayDate, sumEatenMeals } from "@/lib/storage";
+import { formatDisplayDate, sumEatenMeals, sumExerciseCalories } from "@/lib/storage";
 
 interface HistoryViewProps {
   data: AppData;
@@ -25,7 +25,8 @@ export function HistoryView({ data, onSelectDate }: HistoryViewProps) {
       {dates.map((date) => {
         const day = data.days[date];
         const totals = sumEatenMeals(day.meals);
-        const target = data.targets.calories;
+        const burned = sumExerciseCalories(day.exercises);
+        const target = data.targets.calories + burned;
         const pct = Math.round((totals.calories / target) * 100);
         const onTarget =
           totals.calories <= target + 50 &&
@@ -41,7 +42,8 @@ export function HistoryView({ data, onSelectDate }: HistoryViewProps) {
               <div>
                 <p className="font-medium text-zinc-900">{formatDisplayDate(date)}</p>
                 <p className="text-xs text-zinc-400">
-                  {day.meals.filter((m) => m.eaten).length} yemek · {day.exercises.length} egzersiz · {(day.waterMl / 1000).toFixed(1)}L su
+                  {day.meals.filter((m) => m.eaten).length} yemek · {day.exercises.length} egzersiz
+                  {burned > 0 && ` (−${burned} kcal)`} · {(day.waterMl / 1000).toFixed(1)}L su
                 </p>
               </div>
               <div className="text-right">

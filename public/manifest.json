@@ -1,11 +1,31 @@
 {
-  "name": "Beslenme Takip",
-  "short_name": "Beslenme",
-  "description": "Kişisel beslenme, makro ve kilo takip uygulaması",
+  "name": "BurnBite",
+  "short_name": "BurnBite",
+  "description": "Track meals, macros, and calories burned — eat smart, burn more.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fafafa",
   "theme_color": "#10b981",
   "orientation": "portrait",
-  "lang": "tr"
+  "lang": "tr",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
 }

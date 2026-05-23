@@ -1,5 +1,10 @@
+import {
+  createExercise,
+  sumExerciseCalories,
+} from "./exercises";
 import { USER_PROFILE, USER_TARGETS } from "./profile";
-import type { AppData, DayLog, LoggedFood } from "./types";
+import type { AppData, DayLog, LoggedExercise, LoggedFood } from "./types";
+import type { ExerciseType } from "./types";
 
 const STORAGE_KEY = "beslenme-takip-v1";
 
@@ -16,6 +21,34 @@ export function getDefaultAppData(): AppData {
   };
 }
 
+function migrateExercises(exercises: unknown): LoggedExercise[] {
+  if (!Array.isArray(exercises)) return [];
+  return exercises.map((entry, index) => {
+    if (typeof entry === "string") {
+      return createExercise(entry as ExerciseType, 30, USER_PROFILE.currentWeight);
+    }
+    const e = entry as LoggedExercise;
+    return {
+      ...e,
+      id: e.id ?? `ex-${index}`,
+      caloriesBurned:
+        e.caloriesBurned ??
+        createExercise(e.type, e.minutes, USER_PROFILE.currentWeight).caloriesBurned,
+    };
+  });
+}
+
+function migrateDays(days: AppData["days"]): AppData["days"] {
+  const migrated: AppData["days"] = {};
+  for (const [date, day] of Object.entries(days ?? {})) {
+    migrated[date] = {
+      ...day,
+      exercises: migrateExercises(day.exercises),
+    };
+  }
+  return migrated;
+}
+
 export function loadAppData(): AppData {
   if (typeof window === "undefined") return getDefaultAppData();
   try {
@@ -27,11 +60,14 @@ export function loadAppData(): AppData {
       ...parsed,
       profile: USER_PROFILE,
       targets: USER_TARGETS,
+      days: migrateDays(parsed.days),
     };
   } catch {
     return getDefaultAppData();
   }
 }
+
+export { sumExerciseCalories };
 
 export function saveAppData(data: AppData): void {
   if (typeof window === "undefined") return;

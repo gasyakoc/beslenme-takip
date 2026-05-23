@@ -1,4 +1,4 @@
-# Beslenme Takip
+# BurnBite
 
 Kişisel beslenme, makro ve kilo takip uygulaması.
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { AppData, ExerciseType, LoggedFood, MealType } from "@/lib/types";
+import type { AppData, LoggedExercise, LoggedFood, MealType } from "@/lib/types";
 import {
   addDays,
   formatDate,
@@ -10,6 +10,7 @@ import {
   loadAppData,
   saveAppData,
   sumEatenMeals,
+  sumExerciseCalories,
   updateDayLog,
 } from "@/lib/storage";
 import { CalorieRing, MacroProgress } from "./MacroProgress";
@@ -51,10 +52,12 @@ export function App() {
   const appData = data;
   const day = getDayLog(appData, selectedDate);
   const totals = sumEatenMeals(day.meals);
+  const burned = sumExerciseCalories(day.exercises);
   const { targets, profile } = appData;
+  const adjustedCalorieTarget = targets.calories + burned;
   const isToday = selectedDate === formatDate(new Date());
   const proteinOk = totals.protein >= targets.protein * 0.9;
-  const calorieOk = totals.calories <= targets.calories + 50;
+  const calorieOk = totals.calories <= adjustedCalorieTarget + 50;
 
   function updateDay(updater: (d: typeof day) => typeof day) {
     persist(updateDayLog(appData, selectedDate, updater));
@@ -79,12 +82,21 @@ export function App() {
     updateDay((d) => ({ ...d, waterMl: Math.max(0, d.waterMl + ml) }));
   }
 
-  function handleExercise(type: ExerciseType) {
+  function handleAddExercise(exercise: LoggedExercise) {
+    updateDay((d) => ({ ...d, exercises: [...d.exercises, exercise] }));
+  }
+
+  function handleUpdateExercise(exercise: LoggedExercise) {
     updateDay((d) => ({
       ...d,
-      exercises: d.exercises.includes(type)
-        ? d.exercises.filter((e) => e !== type)
-        : [...d.exercises, type],
+      exercises: d.exercises.map((e) => (e.id === exercise.id ? exercise : e)),
+    }));
+  }
+
+  function handleRemoveExercise(id: string) {
+    updateDay((d) => ({
+      ...d,
+      exercises: d.exercises.filter((e) => e.id !== id),
     }));
   }
 
@@ -103,7 +115,7 @@ export function App() {
       <header className="sticky top-0 z-40 border-b border-zinc-100 bg-white/90 px-4 py-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold text-zinc-900">Beslenme Takip</h1>
+            <h1 className="text-lg font-bold text-zinc-900">BurnBite</h1>
             <p className="text-xs text-zinc-500">
               Hedef: {profile.targetWeight} kg · {targets.calories} kcal/gün
             </p>
@@ -146,13 +158,30 @@ export function App() {
           <>
             <section className="rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
               <div className="flex items-center gap-4">
-                <CalorieRing current={totals.calories} target={targets.calories} />
+                <CalorieRing
+                  current={totals.calories}
+                  target={targets.calories}
+                  burned={burned}
+                />
                 <div className="flex-1 space-y-3">
                   <MacroProgress label="Protein" current={totals.protein} target={targets.protein} unit="g" color="#10b981" />
                   <MacroProgress label="Yağ" current={totals.fat} target={targets.fat} unit="g" color="#f59e0b" />
                   <MacroProgress label="Karbonhidrat" current={totals.carbs} target={targets.carbs} unit="g" color="#3b82f6" />
                 </div>
               </div>
+              {burned > 0 && (
+                <div className="mt-3 flex justify-center gap-4 rounded-xl bg-orange-50 py-2 text-xs">
+                  <span className="text-zinc-600">
+                    Alınan: <strong>{Math.round(totals.calories)}</strong>
+                  </span>
+                  <span className="text-orange-600">
+                    Yakılan: <strong>−{burned}</strong>
+                  </span>
+                  <span className="text-emerald-600">
+                    Net: <strong>{Math.round(totals.calories - burned)}</strong>
+                  </span>
+                </div>
+              )}
             </section>
 
             {MEAL_ORDER.map((mealType) => (
@@ -172,7 +201,13 @@ export function App() {
               onAdd={handleWater}
             />
 
-            <ExerciseTracker active={day.exercises} onToggle={handleExercise} />
+            <ExerciseTracker
+              exercises={day.exercises}
+              weightKg={profile.currentWeight}
+              onAdd={handleAddExercise}
+              onUpdate={handleUpdateExercise}
+              onRemove={handleRemoveExercise}
+            />
           </>
         )}
 
