@@ -4,7 +4,7 @@
   "description": "Track meals, macros, and calories burned — eat smart, burn more.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fafafa",
+  "background_color": "#059669",
   "theme_color": "#10b981",
   "orientation": "portrait",
   "lang": "tr",
@@ -22,7 +22,7 @@
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

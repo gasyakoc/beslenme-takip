@@ -5,10 +5,9 @@
       <stop offset="1" stop-color="#059669"/>
     </linearGradient>
   </defs>
-  <!-- Full-bleed square: iOS applies its own rounded mask -->
   <rect width="512" height="512" fill="url(#bg)"/>
-  <!-- Safe zone group ~62% scale, centered -->
-  <g transform="translate(256 256) scale(0.62) translate(-256 -256)">
+  <!-- Maskable safe zone ~52% for adaptive icons -->
+  <g transform="translate(256 256) scale(0.52) translate(-256 -256)">
     <circle cx="256" cy="248" r="108" fill="white" fill-opacity="0.18"/>
     <path d="M176 292c0-44.2 35.8-80 80-80s80 35.8 80 80" stroke="white" stroke-width="22" stroke-linecap="round"/>
     <ellipse cx="256" cy="292" rx="92" ry="28" fill="white" fill-opacity="0.95"/>
