@@ -31,7 +31,7 @@ function food(
 }
 
 export const FOOD_DATABASE: FoodItem[] = [
-  // Kahvaltı / Brunch — yumurta, peynir, zeytin, yulaf, muz, smoothie, fıstık ezmesi, kaymak yok
+  // Kahvaltı — yumurta, peynir, zeytin (sabah), yulaf, muz, smoothie, fıstık ezmesi, kaymak yok
   food("tam-bugday-recel", "Tam Buğday Ekmeği + Reçel", "kahvalti", 70, 195, 5, 2, 38),
   food("tam-bugday-domates", "Tam Buğday Tost + Domates", "kahvalti", 90, 185, 6, 3, 32),
   food("bazlama-bal", "Bazlama + Bal", "kahvalti", 80, 210, 5, 3, 42),
@@ -43,8 +43,7 @@ export const FOOD_DATABASE: FoodItem[] = [
   // Öğle — çorba yok; protein + kontrollü karbonhidrat
   // 100g tavuk göğsü ~165 kcal + 150g pilav ~230 kcal
   food("tavuk-izgara", "Izgara Tavuk Göğsü + Pilav", "ogle", 250, 395, 36, 8, 38),
-  food("tavuk-sote", "Tavuk Sote + Bulgur", "ogle", 280, 370, 35, 9, 34),
-  food("tavuk-guvec", "Tavuk Güveç (pişmiş sebzeli)", "ogle", 280, 310, 32, 10, 22),
+  food("tavuk-sote", "Tavuk Sote + Bulgur + Yeşil Salata", "ogle", 300, 385, 36, 10, 36),
   food("kofte-pilav", "Izgara Köfte + Bulgur Pilavı", "ogle", 300, 410, 30, 16, 36),
   food("balik-izgara", "Izgara Balık + Yeşil Salata", "ogle", 280, 315, 35, 14, 14),
   food("lahmacun", "Lahmacun (1 adet, orta)", "ogle", 120, 185, 10, 7, 22),
@@ -57,11 +56,9 @@ export const FOOD_DATABASE: FoodItem[] = [
   // Akşam — çorba ve karnıyarık yok
   food("izgara-kofte", "Izgara Köfte + Yeşil Salata", "aksam", 280, 350, 29, 15, 16),
   food("tavuk-firin", "Fırında Tavuk (derisiz) + Patates", "aksam", 300, 370, 36, 10, 30),
-  food("balik-buğulama", "Buğulama Balık + Az Pirinç", "aksam", 280, 330, 33, 9, 26),
-  food("sebze-guvec", "Etli Sebze Güveci (patlıcan, kabak)", "aksam", 280, 290, 22, 12, 20),
+  food("balik-buğulama", "Buğulama Balık + Yeşil Salata", "aksam", 280, 310, 34, 10, 12),
   food("manti-az", "Mantı (küçük porsiyon, yoğurt)", "aksam", 180, 300, 13, 9, 40),
   food("pide-kusbasi", "Kuşbaşılı Pide (yarım)", "aksam", 180, 360, 16, 12, 46),
-  food("zeytinyagli-fasulye", "Zeytinyağlı Taze Fasulye + Ekmek", "aksam", 280, 250, 9, 7, 36),
   food("levrek-izgara", "Izgara Levrek + Yeşil Salata", "aksam", 280, 335, 33, 13, 14),
   food("tavuk-izgara-salata", "Izgara Tavuk + Yeşil Salata", "aksam", 250, 310, 35, 10, 12),
   food("tavuk-semizotu-aksam", "Izgara Tavuk + Yoğurtlu Semizotu Salatası", "aksam", 270, 375, 37, 11, 18),
