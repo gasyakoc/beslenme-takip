@@ -13,12 +13,15 @@ import {
   sumExerciseCalories,
   updateDayLog,
 } from "@/lib/storage";
+import { getDailyProteinTarget, hasWorkoutDay } from "@/lib/dailyTargets";
+import { useSmartReminders } from "@/hooks/useSmartReminders";
 import { CalorieRing, MacroProgress } from "./MacroProgress";
 import { MealSection } from "./MealSection";
 import { WaterTracker } from "./WaterTracker";
 import { ExerciseTracker } from "./ExerciseTracker";
 import { WeightTracker } from "./WeightTracker";
 import { HistoryView } from "./HistoryView";
+import { NotificationBanner } from "./NotificationBanner";
 
 type Tab = "bugun" | "gecmis" | "kilo";
 
@@ -31,12 +34,17 @@ export function App() {
 
   useEffect(() => {
     setData(loadAppData());
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
   }, []);
 
   const persist = useCallback((next: AppData) => {
     setData(next);
     saveAppData(next);
   }, []);
+
+  useSmartReminders(data);
 
   if (!data) {
     return (
@@ -54,10 +62,12 @@ export function App() {
   const totals = sumEatenMeals(day.meals);
   const burned = sumExerciseCalories(day.exercises);
   const { targets, profile } = appData;
+  const proteinTarget = getDailyProteinTarget(targets.protein, day.exercises);
   const adjustedCalorieTarget = targets.calories + burned;
   const isToday = selectedDate === formatDate(new Date());
-  const proteinOk = totals.protein >= targets.protein * 0.9;
+  const proteinOk = totals.protein >= proteinTarget * 0.9;
   const calorieOk = totals.calories <= adjustedCalorieTarget + 50;
+  const workoutDay = hasWorkoutDay(day.exercises);
 
   function updateDay(updater: (d: typeof day) => typeof day) {
     persist(updateDayLog(appData, selectedDate, updater));
@@ -170,6 +180,8 @@ export function App() {
       <main className="space-y-4 p-4">
         {tab === "bugun" && (
           <>
+            <NotificationBanner />
+
             <section className="rounded-2xl border border-zinc-100 bg-white p-4 shadow-sm">
               <div className="flex items-center gap-4">
                 <CalorieRing
@@ -178,7 +190,14 @@ export function App() {
                   burned={burned}
                 />
                 <div className="flex-1 space-y-3">
-                  <MacroProgress label="Protein" current={totals.protein} target={targets.protein} unit="g" color="#10b981" />
+                  <div>
+                    <MacroProgress label="Protein" current={totals.protein} target={proteinTarget} unit="g" color="#10b981" />
+                    {workoutDay && (
+                      <p className="mt-0.5 text-[10px] text-emerald-600">
+                        🏋️ Antrenman günü +{proteinTarget - targets.protein}g protein hedefi
+                      </p>
+                    )}
+                  </div>
                   <MacroProgress label="Yağ" current={totals.fat} target={targets.fat} unit="g" color="#f59e0b" />
                   <MacroProgress label="Karbonhidrat" current={totals.carbs} target={targets.carbs} unit="g" color="#3b82f6" />
                 </div>
