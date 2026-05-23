@@ -1,12 +1,17 @@
 "use client";
 
-import type { ExerciseType, LoggedExercise } from "@/lib/types";
+import type { ExerciseType, LoggedExercise, RunningPace } from "@/lib/types";
 import { EXERCISE_LABELS } from "@/lib/types";
 import {
+  PILATES_MET,
+  RUNNING_PACE,
   createExercise,
+  getCaloriesPerKmRunning,
   getCaloriesPerStep,
   sumExerciseCalories,
+  updateExerciseDistance,
   updateExerciseMinutes,
+  updateExerciseRunningPace,
   updateExerciseSteps,
 } from "@/lib/exercises";
 
@@ -105,12 +110,12 @@ export function ExerciseTracker({
                 </button>
               </div>
 
-              {exercise.type === "yuruyus" ? (
+              {exercise.type === "yuruyus" && (
                 <div className="mt-2">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="text-xs text-zinc-500">Adım</span>
                     <span className="text-[10px] text-zinc-400">
-                      ~{calPerStep.toFixed(3)} kcal/adım
+                      ~{calPerStep.toFixed(3)} kcal/adım · MET 3.5
                     </span>
                   </div>
                   <div className="flex items-center justify-end gap-2">
@@ -149,18 +154,94 @@ export function ExerciseTracker({
                     </button>
                   </div>
                 </div>
-              ) : (
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="text-xs text-zinc-500">Süre (dk)</span>
-                  <div className="flex items-center gap-2">
+              )}
+
+              {exercise.type === "kosu" && (
+                <div className="mt-2 space-y-2">
+                  <div className="flex flex-wrap gap-1">
+                    {(Object.keys(RUNNING_PACE) as RunningPace[]).map((pace) => {
+                      const active = (exercise.runningPace ?? "moderate") === pace;
+                      const info = RUNNING_PACE[pace];
+                      return (
+                        <button
+                          key={pace}
+                          onClick={() =>
+                            onUpdate(updateExerciseRunningPace(exercise, pace, weightKg))
+                          }
+                          className={`rounded-lg px-2 py-1 text-[10px] font-medium transition-colors ${
+                            active
+                              ? "bg-emerald-600 text-white"
+                              : "bg-white text-zinc-500 border border-zinc-200"
+                          }`}
+                        >
+                          {info.label} ({info.met} MET)
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-zinc-500">Mesafe (km)</span>
+                    <span className="text-[10px] text-zinc-400">
+                      ~
+                      {getCaloriesPerKmRunning(
+                        exercise.runningPace ?? "moderate",
+                        weightKg
+                      )}{" "}
+                      kcal/km
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() =>
+                        onUpdate(
+                          updateExerciseDistance(
+                            exercise,
+                            (exercise.distanceKm ?? 0) - 0.5,
+                            weightKg
+                          )
+                        )
+                      }
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-sm font-medium hover:bg-zinc-50"
+                    >
+                      −
+                    </button>
+                    <span className="w-12 text-center text-sm font-semibold tabular-nums">
+                      {(exercise.distanceKm ?? 0).toFixed(1)}
+                    </span>
+                    <button
+                      onClick={() =>
+                        onUpdate(
+                          updateExerciseDistance(
+                            exercise,
+                            (exercise.distanceKm ?? 0) + 0.5,
+                            weightKg
+                          )
+                        )
+                      }
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-sm font-medium hover:bg-zinc-50"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {exercise.type === "pilates" && (
+                <div className="mt-2">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-xs text-zinc-500">Süre (dk)</span>
+                    <span className="text-[10px] text-zinc-400">
+                      MET {PILATES_MET} · Compendium 02105
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() =>
                         onUpdate(
                           updateExerciseMinutes(
                             exercise,
                             (exercise.minutes ?? 0) - 5,
-                            weightKg,
-                            heightCm
+                            weightKg
                           )
                         )
                       }
@@ -177,8 +258,7 @@ export function ExerciseTracker({
                           updateExerciseMinutes(
                             exercise,
                             (exercise.minutes ?? 0) + 5,
-                            weightKg,
-                            heightCm
+                            weightKg
                           )
                         )
                       }

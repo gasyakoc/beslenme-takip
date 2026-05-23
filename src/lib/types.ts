@@ -2,6 +2,9 @@ export type MealType = "kahvalti" | "ogle" | "aksam" | "ara1" | "ara2";
 
 export type ExerciseType = "yuruyus" | "kosu" | "pilates";
 
+/** 2011 Compendium of Physical Activities — koşu hız kodları */
+export type RunningPace = "jog" | "moderate" | "fast";
+
 export interface MacroNutrients {
   calories: number;
   protein: number;
@@ -29,8 +32,10 @@ export interface LoggedFood extends MacroNutrients {
 export interface LoggedExercise {
   id: string;
   type: ExerciseType;
-  minutes?: number;
   steps?: number;
+  distanceKm?: number;
+  runningPace?: RunningPace;
+  minutes?: number;
   caloriesBurned: number;
 }
 
